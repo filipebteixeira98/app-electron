@@ -1,9 +1,11 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, globalShortcut } = require('electron');
 
 // const config = require('./config');
 
+let window;
+
 function createWindow() {
-  const window = new BrowserWindow({
+  window = new BrowserWindow({
     width: 800,
     height: 600,
     titleBarStyle: 'hidden',
@@ -15,11 +17,17 @@ function createWindow() {
 
   window.loadFile('index.html');
   // window.loadURL(config.url);
-
-  window.webContents.openDevTools();
 }
 
-app.whenReady().then(createWindow);
+function toggleDevTools() {
+  window.webContents.toggleDevTools();
+}
+
+function createShortcuts() {
+  globalShortcut.register('CmdOrCtrl+J', toggleDevTools);
+}
+
+app.whenReady().then(createWindow).then(createShortcuts);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
